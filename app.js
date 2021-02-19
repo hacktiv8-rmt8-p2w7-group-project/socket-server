@@ -42,11 +42,11 @@ io.on("connection", (socket) => {
         } else {
             socket.username = name
             if (users.indexOf(socket.username) > -1) {
-                socket.emit("taken", false)
+                socket.emit("taken", {state: true, name})
             } else {
                 users.push(socket.username)
                 updateUsernames()
-                socket.emit("taken", name)
+                socket.emit("taken", {state: false, name})
                 if (Object.keys(users).length == 2) {
                     io.emit("connected", socket.username)
                     io.emit("game start")
@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
     })
     // player choices
     socket.on("player choice", function (username, choice) {
-        console.log(username, choice)
+        console.log({username, choice, choices})
         choices.push({ user: username, choice: choice })
         console.log("%s chose %s.", username, choice)
         if (choices.length == 2) {
