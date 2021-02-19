@@ -37,18 +37,23 @@ io.on("connection", (socket) => {
     })
     // add user - login
     socket.on("login", function (name) {
-        socket.username = name
-        if (users.indexOf(socket.username) > -1) {
-            socket.emit("taken", true)
+        if (users.length >= 2) {
+            socket.emit("roomFull")
         } else {
-            users.push(socket.username)
-            updateUsernames()
-            socket.emit("taken", false)
-            if (Object.keys(users).length == 2) {
-                io.emit("connected", socket.username)
-                io.emit("game start")
+            socket.username = name
+            if (users.indexOf(socket.username) > -1) {
+                socket.emit("taken", false)
+            } else {
+                users.push(socket.username)
+                updateUsernames()
+                socket.emit("taken", name)
+                if (Object.keys(users).length == 2) {
+                    io.emit("connected", socket.username)
+                    io.emit("game start")
+                }
             }
         }
+        
     })
     // player choices
     socket.on("player choice", function (username, choice) {
