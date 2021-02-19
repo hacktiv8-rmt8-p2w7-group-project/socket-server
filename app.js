@@ -35,6 +35,13 @@ io.on("connection", (socket) => {
         io.emit("disconnected", socket.username)
         console.log("Disconnected: %s sockets connected", connections.length)
     })
+    socket.on("leave", function (data) {
+        users.splice(users.indexOf(socket.username), 1)
+        updateUsernames()
+        connections.splice(connections.indexOf(socket), 1)
+        io.emit("disconnected", socket.username)
+        console.log("Disconnected: %s sockets connected", connections.length)
+    })
     // add user - login
     socket.on("login", function (name) {
         if (users.length >= 2) {
@@ -42,22 +49,21 @@ io.on("connection", (socket) => {
         } else {
             socket.username = name
             if (users.indexOf(socket.username) > -1) {
-                socket.emit("taken", {state: true, name})
+                socket.emit("taken", { state: true, name })
             } else {
                 users.push(socket.username)
                 updateUsernames()
-                socket.emit("taken", {state: false, name})
+                socket.emit("taken", { state: false, name })
                 if (Object.keys(users).length == 2) {
                     io.emit("connected", socket.username)
                     io.emit("game start")
                 }
             }
         }
-        
     })
     // player choices
     socket.on("player choice", function (username, choice) {
-        console.log({username, choice, choices})
+        console.log({ username, choice, choices })
         choices.push({ user: username, choice: choice })
         console.log("%s chose %s.", username, choice)
         if (choices.length == 2) {
@@ -118,7 +124,6 @@ io.on("connection", (socket) => {
     function updateUsernames() {
         io.sockets.emit("getUser", users)
     }
-    //
 })
 
 http.listen(3000, () => {
