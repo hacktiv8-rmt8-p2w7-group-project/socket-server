@@ -63,9 +63,9 @@ io.on("connection", (socket) => {
     })
     // player choices
     socket.on("player choice", function (username, choice) {
-        console.log({ username, choice, choices })
+        // console.log({ username, choice, choices })
         choices.push({ user: username, choice: choice })
-        console.log("%s chose %s.", username, choice)
+        // console.log("%s chose %s.", username, choice)
         if (choices.length == 2) {
             console.log("[socket.io] Both players have made choices.")
             switch (choices[0]["choice"]) {
